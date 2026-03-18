@@ -54,11 +54,9 @@ clean: ## Remove built images and volumes
 	$(COMPOSE) --env-file .env down -v --rmi local 2>/dev/null || true
 	docker rmi goose-runtime:latest mcp-hello-world:latest 2>/dev/null || true
 
-validate-config: ## Check config files for YAML syntax errors
-	@echo "Validating config/config.yaml..."
-	@python3 -c "import yaml; yaml.safe_load(open('config/config.yaml'))" && echo "  OK" || echo "  FAILED"
-	@echo "Validating config/permission.yaml..."
-	@python3 -c "import yaml; yaml.safe_load(open('config/permission.yaml'))" && echo "  OK" || echo "  FAILED"
+validate-config: ## Check config files for YAML syntax errors (requires pyyaml: pip install pyyaml)
+	@python3 -c "import yaml; yaml.safe_load(open('config/config.yaml')); print('config/config.yaml: OK')"
+	@python3 -c "import yaml; yaml.safe_load(open('config/permission.yaml')); print('config/permission.yaml: OK')"
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | \
