@@ -1,0 +1,10 @@
+# Environment
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+*.pyc
+__pycache__/

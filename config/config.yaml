@@ -1,0 +1,50 @@
+# Goose Extension Configuration
+# ==============================
+# This file defines which MCP servers (extensions) the agent connects to.
+# Place this file at $GOOSE_PATH_ROOT/config/config.yaml
+#
+# To add a new MCP server:
+#   1. Add an entry below with a unique key
+#   2. Set the type, name, and connection details
+#   3. Rebuild or restart the goose container
+
+extensions:
+
+  # --- Sample MCP server (hello-world) ---
+  hello-world:
+    enabled: true
+    type: streamable_http
+    name: hello-world
+    description: Sample MCP server demonstrating tool patterns
+    # Short name works in Docker Compose; FQDN needed for Kubernetes.
+    # Override via MCP_HELLO_WORLD_URI env var for k8s deployments.
+    uri: ${MCP_HELLO_WORLD_URI:-http://mcp-hello-world:8080/mcp}
+    timeout: 300
+
+  # --- Connect to an existing MCP server ---
+  # my-existing-service:
+  #   enabled: true
+  #   type: streamable_http
+  #   name: my-existing-service
+  #   uri: http://my-mcp-server.other-namespace.svc.cluster.local:8080/mcp
+  #   timeout: 300
+  #   headers:
+  #     Authorization: "Bearer ${MCP_AUTH_TOKEN}"
+
+  # --- Stdio-based MCP server (sidecar or local binary) ---
+  # my-local-tool:
+  #   enabled: true
+  #   type: stdio
+  #   name: my-local-tool
+  #   description: Local tool running as a subprocess
+  #   cmd: my-tool-binary
+  #   args: ["--format", "json"]
+  #   envs:
+  #     TOOL_HOST: tool.internal.example.com
+  #   env_keys: [TOOL_API_KEY]
+
+  # --- Disable built-in developer extension ---
+  developer:
+    enabled: false
+    type: builtin
+    name: developer

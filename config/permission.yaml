@@ -1,0 +1,17 @@
+# Goose Tool Permission Rules
+# ============================
+# Tool names use the pattern: extension_name__tool_name (double underscore)
+#
+# Sections:
+#   always_allow - tools that execute without confirmation
+#   ask_before   - tools that require approval before execution
+#   never_allow  - tools that are always blocked
+
+user:
+  always_allow:
+    - hello-world__greet
+    - hello-world__add_numbers
+  ask_before:
+    - hello-world__log_message
+  # never_allow:
+  #   - some-extension__dangerous_tool

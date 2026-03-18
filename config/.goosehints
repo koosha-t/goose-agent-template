@@ -1,0 +1,12 @@
+# Agent Hints
+# ============
+# This file provides auxiliary context injected into the system prompt.
+# Use it for deployment-specific guidance that may change per environment.
+# Supports @filename imports for larger context files.
+#
+# Examples:
+#   @docs/api-reference.md
+#   @docs/naming-conventions.md
+
+This agent is deployed via the goose-agent-template.
+Customize this file with domain-specific context for your deployment.
