@@ -1,0 +1,55 @@
+# goose-agent-template — Local Development
+# =========================================
+# Usage:
+#   make up        (from repo root)
+#   docker compose -f deploy/docker-compose.yaml --env-file ../.env up --build
+
+services:
+
+  goose:
+    build:
+      context: ..
+      dockerfile: Dockerfile.goose
+    ports:
+      - "3000:3000"
+    env_file:
+      - ../.env
+    depends_on:
+      mcp-hello-world:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+    restart: unless-stopped
+
+    # Uncomment for session persistence across container restarts:
+    # volumes:
+    #   - goose-data:/goose/data
+
+  mcp-hello-world:
+    build:
+      context: ../mcp-servers/hello-world
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/mcp')"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # --- Uncomment for local trace visualization ---
+  # jaeger:
+  #   image: jaegertracing/all-in-one:1.57
+  #   ports:
+  #     - "16686:16686"   # Jaeger UI
+  #     - "4317:4317"     # OTLP gRPC
+  #   environment:
+  #     COLLECTOR_OTLP_ENABLED: "true"
+
+# volumes:
+#   goose-data:
