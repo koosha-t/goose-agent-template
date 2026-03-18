@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-hello-world
+  namespace: goose-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mcp-hello-world
+  template:
+    metadata:
+      labels:
+        app: mcp-hello-world
+    spec:
+      containers:
+      - name: mcp-hello-world
+        image: your-registry/mcp-hello-world:latest  # <-- Replace with your image
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /mcp
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /mcp
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 5

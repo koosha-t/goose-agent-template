@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goose-runtime
+  namespace: goose-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: goose-runtime
+  template:
+    metadata:
+      labels:
+        app: goose-runtime
+    spec:
+      containers:
+      - name: goose
+        image: your-registry/goose-runtime:latest  # <-- Replace with your image
+        ports:
+        - containerPort: 3000
+        env:
+        - name: GOOSE_PROVIDER
+          valueFrom:
+            secretKeyRef:
+              name: goose-secrets
+              key: GOOSE_PROVIDER
+        - name: GOOSE_MODEL
+          valueFrom:
+            secretKeyRef:
+              name: goose-secrets
+              key: GOOSE_MODEL
+        - name: ANTHROPIC_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: goose-secrets
+              key: ANTHROPIC_API_KEY
+        - name: MCP_HELLO_WORLD_URI
+          value: "http://mcp-hello-world.goose-agent.svc.cluster.local:8080/mcp"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+        # Uncomment for session persistence:
+        # volumeMounts:
+        # - name: goose-data
+        #   mountPath: /goose/data
+
+      # volumes:
+      # - name: goose-data
+      #   persistentVolumeClaim:
+      #     claimName: goose-data-pvc
+
+# ---
+# Uncomment for session persistence:
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: goose-data-pvc
+#   namespace: goose-agent
+# spec:
+#   accessModes: [ReadWriteOnce]
+#   resources:
+#     requests:
+#       storage: 1Gi
